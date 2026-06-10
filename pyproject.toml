@@ -7,3 +7,10 @@ requires-python = ">=3.11"
 dependencies = [
     "python-telegram-bot>=22.7",
 ]
+
+[dependency-groups]
+dev = [
+    "pre-commit>=4.6.0",
+    "ruff>=0.15.16",
+    "ty>=0.0.46",
+]
