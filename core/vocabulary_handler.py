@@ -21,7 +21,7 @@ def _get_agent(settings: AppSettings) -> Agent:
     return _agent
 
 
-def validate_pairs(pairs: list[dict]) -> list[dict]:
+async def validate_pairs(pairs: list[dict]) -> list[dict]:
     return [
         p
         for p in pairs

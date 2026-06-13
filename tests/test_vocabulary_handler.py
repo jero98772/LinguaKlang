@@ -6,59 +6,71 @@ from core.models import VocabularyList, WordPair
 
 
 class TestValidatePairs:
-    def test_valid_pairs_pass_through(self):
+    @pytest.mark.anyio
+    async def test_valid_pairs_pass_through(self):
         pairs = [{"native": "cat", "target": "gato"}]
-        assert validate_pairs(pairs) == pairs
+        assert await validate_pairs(pairs) == pairs
 
-    def test_filters_multi_word_native(self):
+    @pytest.mark.anyio
+    async def test_filters_multi_word_native(self):
         pairs = [{"native": "the cat", "target": "gato"}]
-        assert validate_pairs(pairs) == []
+        assert await validate_pairs(pairs) == []
 
-    def test_filters_multi_word_target(self):
+    @pytest.mark.anyio
+    async def test_filters_multi_word_target(self):
         pairs = [{"native": "cat", "target": "el gato"}]
-        assert validate_pairs(pairs) == []
+        assert await validate_pairs(pairs) == []
 
-    def test_filters_single_char_native(self):
+    @pytest.mark.anyio
+    async def test_filters_single_char_native(self):
         pairs = [{"native": "a", "target": "gato"}]
-        assert validate_pairs(pairs) == []
+        assert await validate_pairs(pairs) == []
 
-    def test_filters_single_char_target(self):
+    @pytest.mark.anyio
+    async def test_filters_single_char_target(self):
         pairs = [{"native": "cat", "target": "g"}]
-        assert validate_pairs(pairs) == []
+        assert await validate_pairs(pairs) == []
 
-    def test_filters_numeric_native(self):
+    @pytest.mark.anyio
+    async def test_filters_numeric_native(self):
         pairs = [{"native": "123", "target": "gato"}]
-        assert validate_pairs(pairs) == []
+        assert await validate_pairs(pairs) == []
 
-    def test_filters_numeric_target(self):
+    @pytest.mark.anyio
+    async def test_filters_numeric_target(self):
         pairs = [{"native": "cat", "target": "456"}]
-        assert validate_pairs(pairs) == []
+        assert await validate_pairs(pairs) == []
 
-    def test_filters_empty_native(self):
+    @pytest.mark.anyio
+    async def test_filters_empty_native(self):
         pairs = [{"native": "", "target": "gato"}]
-        assert validate_pairs(pairs) == []
+        assert await validate_pairs(pairs) == []
 
-    def test_filters_missing_keys(self):
+    @pytest.mark.anyio
+    async def test_filters_missing_keys(self):
         pairs = [{"native": "cat"}]
-        assert validate_pairs(pairs) == []
+        assert await validate_pairs(pairs) == []
 
-    def test_mixed_valid_and_invalid(self):
+    @pytest.mark.anyio
+    async def test_mixed_valid_and_invalid(self):
         pairs = [
             {"native": "cat", "target": "gato"},
             {"native": "the cat", "target": "gato"},
             {"native": "dog", "target": "perro"},
         ]
-        result = validate_pairs(pairs)
+        result = await validate_pairs(pairs)
         assert len(result) == 2
         assert result[0]["native"] == "cat"
         assert result[1]["native"] == "dog"
 
-    def test_empty_input(self):
-        assert validate_pairs([]) == []
+    @pytest.mark.anyio
+    async def test_empty_input(self):
+        assert await validate_pairs([]) == []
 
-    def test_preserves_valid_pair_content(self):
+    @pytest.mark.anyio
+    async def test_preserves_valid_pair_content(self):
         pair = {"native": "apple", "target": "manzana"}
-        result = validate_pairs([pair])
+        result = await validate_pairs([pair])
         assert result[0] == pair
 
 

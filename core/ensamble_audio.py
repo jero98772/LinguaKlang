@@ -33,8 +33,14 @@ async def ensamble_audio(update: Update, context):
         return
 
     chat_id = chat.id
-    audio_command_parts = await parse_audio_command(message_parts, settings, update)
-
+    try:
+        audio_command_parts = await parse_audio_command(
+            message_parts,
+            settings,
+            update,
+        )
+    except ValueError:
+        return
     output = settings.build_output_path(
         topic=audio_command_parts.topic,
         native=audio_command_parts.native,
@@ -44,14 +50,17 @@ async def ensamble_audio(update: Update, context):
     if await send_cached_audio(output, chat_id, context):
         return
 
-    raw = generate_vocabulary(
-        settings,
-        audio_command_parts.topic,
-        audio_command_parts.native,
-        audio_command_parts.target,
-        audio_command_parts.repeat,
-    )
-    pairs = validate_pairs(raw)
+    try:
+        raw = generate_vocabulary(
+            settings,
+            audio_command_parts.topic,
+            audio_command_parts.native,
+            audio_command_parts.target,
+            audio_command_parts.repeat,
+        )
+    except ValueError:
+        return
+    pairs = await validate_pairs(raw)
     message_pairs = await format_pairs_message(pairs)
     if update.message:
         await update.message.reply_text(message_pairs)

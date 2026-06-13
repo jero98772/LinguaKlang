@@ -12,6 +12,7 @@ dependencies = [
     "ollama>=0.6.2",
     "pydantic-settings>=2.14.1",
     "pytest>=9.0.3",
+    "pytest-benchmark>=5.2.3",
     "python-telegram-bot>=22.7",
     "resemble-perth",
     "soundfile>=0.14.0",
