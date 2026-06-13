@@ -1,5 +1,7 @@
 # LinguaKlang
 
+![](https://raw.githubusercontent.com/jero98772/LinguaKlang/refs/heads/dev/docs/logo.png)
+
 LinguaKlang is a Telegram bot that generates themed vocabulary lists and creates pronunciation audio to help language learning.
 
 ## Features
