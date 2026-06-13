@@ -1,6 +1,4 @@
-def main():
-    print("Hello from linguaklang!")
-
+from core.telegram_bot import main
 
 if __name__ == "__main__":
     main()

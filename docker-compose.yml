@@ -1,0 +1,29 @@
+services:
+  ollama:
+    image: ollama/ollama:latest
+    ports:
+      - "11434:11434"
+    volumes:
+      - ollama_data:/root/.ollama
+
+  ollama-init:
+    image: ollama/ollama:latest
+    depends_on:
+      - ollama
+    command: >
+      sh -c "
+      sleep 15 &&
+      ollama pull qwen2.5:7b
+      "
+
+  app:
+    build: .
+    depends_on:
+      - ollama-init
+    env_file:
+      - .env
+    environment:
+      OLLAMA_URL: http://ollama:11434
+
+volumes:
+  ollama_data:
