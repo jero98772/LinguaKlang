@@ -35,6 +35,8 @@ Edit `.env` and **set your Telegram bot token** and other settings.
 Start the bot with:
 
 ```bash
+docker compose up -d
+
 uv run main.py
 ```
 

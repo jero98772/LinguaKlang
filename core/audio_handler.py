@@ -60,8 +60,9 @@ async def build_audio(
     settings: AppSettings,
 ) -> tuple[np.ndarray, int]:
     sr = model.sr
-    native_code = settings.LANG_CODES[native_lang.lower()]
-    target_code = settings.LANG_CODES[target_lang.lower()]
+    native_code = settings.get_lang_code(native_lang.lower())
+    target_code = settings.get_lang_code(target_lang.lower())
+
     segs: list[np.ndarray] = [await silence(settings.SILENCE_LONG_S, sr)]
 
     for pair in pairs:

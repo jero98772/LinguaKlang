@@ -1,24 +1,11 @@
-from typing import List
-from pydantic import BaseModel, Field
+from typing import cast
 from strands import Agent
 from strands.models.ollama import OllamaModel
 from core.constants import AppSettings
-from typing import cast
+from core.models import VocabularyList
+
 
 _agent: Agent | None = None
-
-
-class WordPair(BaseModel):
-    native: str = Field(
-        description="A single word in the native language. No spaces, no articles, no phrases."
-    )
-    target: str = Field(
-        description="A single word in the target language. No spaces, no articles, no phrases."
-    )
-
-
-class VocabularyList(BaseModel):
-    pairs: List[WordPair] = Field(description="List of vocabulary word pairs.")
 
 
 def _get_agent(settings: AppSettings) -> Agent:
@@ -58,30 +45,21 @@ def generate_vocabulary(
     target: str,
     n: int,
 ) -> list[dict]:
-    prompt = (
-        f'Generate exactly {n} vocabulary word pairs for the theme: "{theme}".\n'
-        f"Native language: {native}\n"
-        f"Target language: {target}\n"
-        f"Rules: single words only, no articles, no phrases, at least 2 characters each, "
-        f"real nouns/verbs/adjectives only."
-    )
-
+    prompt = settings.build_prompt(n, theme, native, target)
     result = _get_agent(settings)(
         prompt,
         structured_output_model=VocabularyList,
     )
 
     if result.structured_output is None:
-        raise ValueError("No structured output returned")
+        raise RuntimeError("LLM returned no structured output")
 
     vocab = cast(VocabularyList, result.structured_output)
-
     pairs = [
         {"native": p.native.strip(), "target": p.target.strip()} for p in vocab.pairs
     ]
 
-    col = max(len(p["native"]) for p in pairs) + 2
-    for p in pairs:
-        print(f"  {p['native']:>{col}}  →  {p['target']}")
+    if not pairs:
+        raise RuntimeError("LLM returned an empty vocabulary list")
 
     return pairs
